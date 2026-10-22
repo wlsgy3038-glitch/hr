@@ -282,7 +282,9 @@ function parseRoute() {
 
 function loadTests() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  const loaded = saved ? JSON.parse(saved) : [];
+  const loaded = saved
+    ? JSON.parse(saved)
+    : (window.APP_SEED_DATA?.tests || []);
   return loaded.map((test) => ({
     ...test,
     participants: (test.participants || []).map(normalizeParticipant),
@@ -317,7 +319,12 @@ function loadQuestions() {
       return parsed;
     }
   }
-  const parsed = EGOGRAM_ITEMS.map((question) => ({ ...question }));
+  const seededQuestions = window.APP_SEED_DATA?.questions;
+  const parsed = window.APP_SEED_DATA?.questionsRevision === QUESTION_REVISION
+    && Array.isArray(seededQuestions)
+    && seededQuestions.length
+    ? seededQuestions
+    : EGOGRAM_ITEMS.map((question) => ({ ...question }));
   localStorage.setItem(QUESTION_STORAGE_KEY, JSON.stringify(parsed));
   localStorage.setItem(QUESTION_REVISION_KEY, QUESTION_REVISION);
   return parsed;
